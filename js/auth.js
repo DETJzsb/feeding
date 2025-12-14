@@ -1,40 +1,24 @@
 import { supabase } from "./supabase.js";
 
-/* ========== SIGNUP ========== */
+/* signup */
 window.signup = async function () {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const fullName = document.getElementById("full_name").value;
 
-  // 1. create auth user
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  });
+  const { error } = await supabase.auth.signUp({ email, password });
+  if (error) return alert(error.message);
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // 2. insert signup request (PENDING)
   const { error: dbError } = await supabase
     .from("signup_requests")
-    .insert({
-      email: email,
-      full_name: fullName,
-      status: "pending"
-    });
+    .insert({ email, full_name: fullName, status: "pending" });
 
-  if (dbError) {
-    alert("Database error saving new user");
-    return;
-  }
+  if (dbError) return alert("Database error");
 
-  alert("Signup request sent. Wait for approval.");
+  alert("Signup request sent");
 };
 
-/* ========== LOGIN ========== */
+/* login */
 window.login = async function () {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -44,22 +28,17 @@ window.login = async function () {
     password
   });
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+  if (error) return alert(error.message);
 
-  // check approval
-  const { data: req } = await supabase
+  const { data: user } = await supabase
     .from("users")
     .select("role")
     .eq("id", data.user.id)
     .single();
 
-  if (!req) {
-    alert("Account not approved yet");
+  if (!user) {
     await supabase.auth.signOut();
-    return;
+    return alert("Account not approved yet");
   }
 
   window.location.href = "index.html";
