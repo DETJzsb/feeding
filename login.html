@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Login</title>
 </head>
 <body>
 
-  <h1>Login</h1>
+<h1>Login</h1>
 
-  <input id="email" placeholder="email">
-  <input id="password" type="password" placeholder="password">
-  <button onclick="login()">Login</button>
+<input id="email" type="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
 
-  <!-- 1️⃣ Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<button onclick="login()">Login</button>
 
-  <!-- 2️⃣ Supabase client -->
-  <script src="js/supabase.js"></script>
-
-  <!-- 3️⃣ Auth logic -->
-  <script src="js/auth.js"></script>
-
+<script type="module" src="js/auth.js"></script>
 </body>
 </html>
