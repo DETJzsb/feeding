@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Agent Profile</title>
-<script src="js/supabase.js"></script>
+  <title>Agent Profile</title>
 </head>
 <body>
-<h1>My Profile</h1>
-<div id="profile"></div>
 
+  <h1>My Profile</h1>
 
-<script>
-async function loadProfile() {
-const { data: { user } } = await supabase.auth.getUser()
-const { data } = await supabase
-.from('users')
-.select('matricule, full_name, roles(label)')
-.eq('id', user.id)
-.single()
+  <div id="profile">Loading...</div>
 
+  <button onclick="logout()">Logout</button>
 
-document.getElementById('profile').innerHTML = `
-<p>Matricule: ${data.matricule || ''}</p>
-<p>Name: ${data.full_name || ''}</p>
-<p>Role: ${data.roles.label}</p>
-`
-}
-loadProfile()
-</script>
+  <!-- 1️⃣ Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- 2️⃣ Supabase client -->
+  <script src="js/supabase.js"></script>
+
+  <!-- 3️⃣ Guard (agent only) -->
+  <script src="js/guard.js"></script>
+
+  <!-- 4️⃣ Page logic -->
+  <script src="js/agent-profile.js"></script>
+
+  <!-- 5️⃣ Auth (logout) -->
+  <script src="js/auth.js"></script>
+
 </body>
 </html>
