@@ -1,26 +1,36 @@
-document.getElementById("signupBtn").addEventListener("click", signup)
+import { supabase } from "./supabase.js";
 
 async function signup() {
-  const email = document.getElementById("email").value.trim()
-  const password = document.getElementById("password").value.trim()
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  console.log("EMAIL =", email)
-  console.log("PASSWORD =", password)
-
-  if (!email || !password) {
-    alert("Email and password required")
-    return
-  }
-
-  const { data, error } = await window.supabase.auth.signUp({
+  // 1️⃣ Signup (Auth only)
+  const { data, error } = await supabase.auth.signUp({
     email,
-    password
-  })
+    password,
+  });
 
   if (error) {
-    alert(error.message)
-  } else {
-    alert("Signup OK")
-    window.location.href = "login.html"
+    alert(error.message);
+    return;
   }
+
+  const user = data.user;
+
+  // 2️⃣ Insert signup request
+  const { error: dbError } = await supabase
+    .from("signup_requests")
+    .insert({
+      id: user.id,        // نفس id متاع auth
+      email: email,
+      status: "pending",
+    });
+
+  if (dbError) {
+    alert("Database error saving new user");
+    console.error(dbError);
+    return;
+  }
+
+  alert("Signup request sent. Wait for approval.");
 }
