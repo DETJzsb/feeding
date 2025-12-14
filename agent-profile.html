@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Agent Profile</title>
+<script src="js/supabase.js"></script>
+</head>
+<body>
+<h1>My Profile</h1>
+<div id="profile"></div>
+
+
+<script>
+async function loadProfile() {
+const { data: { user } } = await supabase.auth.getUser()
+const { data } = await supabase
+.from('users')
+.select('matricule, full_name, roles(label)')
+.eq('id', user.id)
+.single()
+
+
+document.getElementById('profile').innerHTML = `
+<p>Matricule: ${data.matricule || ''}</p>
+<p>Name: ${data.full_name || ''}</p>
+<p>Role: ${data.roles.label}</p>
+`
+}
+loadProfile()
+</script>
+</body>
+</html>
