@@ -2,7 +2,7 @@
 async function guardRole(expectedRole) {
 const { data: { user } } = await supabase.auth.getUser()
 if (!user) {
-window.location.href = 'login.html'
+window.location.href = "login.html"
 return
 }
 
@@ -16,6 +16,6 @@ const { data } = await supabase
 
 if (data.roles.code !== expectedRole) {
 alert('Access denied')
-window.location.href = 'index.html'
+window.location.href = "index.html"
 }
 }
