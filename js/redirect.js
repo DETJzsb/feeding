@@ -1,19 +1,16 @@
-import { supabase } from "./supabase.js";
+const role = localStorage.getItem("role");
 
-const { data: session } = await supabase.auth.getSession();
-
-if (!session.session) {
-  window.location.href = "login.html";
+if (!role) {
+  window.location.href = "/index.html";
 }
 
-const { data: profile } = await supabase
-  .from("profiles")
-  .select("role")
-  .eq("id", session.session.user.id)
-  .single();
+const routes = {
+  admin: "/admin/index.html",
+  directeur: "/directeur/index.html",
+  sous_directeur: "/sous-directeur/index.html",
+  supervisor: "/supervisor/index.html",
+  team_leader: "/team-leader/index.html",
+  agent: "/agent/index.html"
+};
 
-if (profile.role === "agent") {
-  window.location.href = "agent.html";
-} else {
-  window.location.href = "admin.html";
-}
+window.location.href = routes[role];
