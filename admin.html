@@ -1,27 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Approval</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
 </head>
 <body>
 
-  <h1>Users Waiting For Approval</h1>
+<h1>Users waiting approval</h1>
 
-  <table border="1" cellpadding="10">
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="users-table">
-      <!-- users here -->
-    </tbody>
-  </table>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="users"></tbody>
+</table>
 
-  <script type="module" src="js/admin.js"></script>
+<script type="module">
+  import { supabase } from "./js/supabase.js";
+  import { approveUser } from "./js/approve.js";
+  import "./js/guard.js"; // حماية الصفحة
+
+  const table = document.getElementById("users");
+
+  const { data: users } = await supabase
+    .from("profiles")
+    .select("id, role, approved")
+    .eq("approved", false);
+
+  users.forEach(u => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${u.id}</td>
+      <td>${u.role}</td>
+      <td>
+        <button onclick="approve('${u.id}')">Approve</button>
+      </td>
+    `;
+
+    table.appendChild(tr);
+  });
+
+  window.approve = approveUser;
+</script>
+
 </body>
 </html>
