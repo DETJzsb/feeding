@@ -1,22 +1,30 @@
-async function guardRole(expectedRole) {
-  const { data: { user } } = await window.supabase.auth.getUser()
+import { supabase } from "./supabase.js";
 
-  if (!user) {
-    window.location.href = "login.html"
-    return
+window.login = async function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert("Wrong email or password");
+    return;
   }
 
-  const { data, error } = await window.supabase
-    .from("users")
-    .select("roles(code)")
-    .eq("id", user.id)
-    .single()
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("approved, role")
+    .eq("id", data.user.id)
+    .single();
 
-  if (error || data.roles.code !== expectedRole) {
-    alert("Access denied")
-    window.location.href = "index.html"
+  if (!profile.approved) {
+    await supabase.auth.signOut();
+    alert("Account not approved yet");
+    return;
   }
-}
 
-// استعملها هكّا في body onload
-// <body onload="guardRole('agent')">
+  window.location.href = "index.html";
+};
