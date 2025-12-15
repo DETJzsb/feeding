@@ -1,30 +1,25 @@
 import { supabase } from "./supabase.js";
 
-window.login = async function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const { data: { user } } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+if (!user) {
+  window.location.href = "login.html";
+}
 
-  if (error) {
-    alert("Wrong email or password");
-    return;
-  }
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("role, approved")
+  .eq("id", user.id)
+  .single();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("approved, role")
-    .eq("id", data.user.id)
-    .single();
+if (!profile.approved) {
+  await supabase.auth.signOut();
+  alert("Account not approved");
+  window.location.href = "login.html";
+}
 
-  if (!profile.approved) {
-    await supabase.auth.signOut();
-    alert("Account not approved yet");
-    return;
-  }
-
+// agent ممنوع يدخل صفحات approval
+if (profile.role === "agent") {
+  alert("Access denied");
   window.location.href = "index.html";
-};
+}
