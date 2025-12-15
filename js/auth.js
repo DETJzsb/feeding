@@ -1,45 +1,27 @@
 import { supabase } from "./supabase.js";
 
-/* signup */
 window.signup = async function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const fullName = document.getElementById("full_name").value;
-
-  const { error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert(error.message);
-
-  const { error: dbError } = await supabase
-    .from("signup_requests")
-    .insert({ email, full_name: fullName, status: "pending" });
-
-  if (dbError) return alert("Database error");
-
-  alert("Signup request sent");
-};
-
-/* login */
-window.login = async function () {
+  const fullName = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password
   });
 
-  if (error) return alert(error.message);
-
-  const { data: user } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", data.user.id)
-    .single();
-
-  if (!user) {
-    await supabase.auth.signOut();
-    return alert("Account not approved yet");
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  window.location.href = "index.html";
+  await supabase.from("profiles").insert({
+    id: data.user.id,
+    full_name: fullName,
+    role: "agent",
+    approved: false
+  });
+
+  alert("Account created, waiting for approval");
+  window.location.href = "login.html";
 };
