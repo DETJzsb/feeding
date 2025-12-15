@@ -1,11 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin</title>
+  <meta charset="UTF-8" />
+  <title>Admin Approval</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h1>Admin / Supervisor / Team Leader</h1>
-  <p>You can approve users here.</p>
+
+  <h1>Users Waiting For Approval</h1>
+
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="users-table">
+      <!-- users here -->
+    </tbody>
+  </table>
+
+  <script type="module" src="js/admin.js"></script>
 </body>
 </html>
